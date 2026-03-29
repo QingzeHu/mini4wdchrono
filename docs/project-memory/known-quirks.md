@@ -29,5 +29,5 @@ Sentinel value used for disqualified / timed-out / not-started cars. Appears thr
 ## `configuration` Not Imported in `client.js`
 `client.js` uses `configuration.get()` on lines 25 and 206 without importing the module. This is a latent bug — likely worked in older versions where it may have been attached to window scope or was never reached in certain code paths.
 
-## DevTools Open by Default
-`window.js` currently opens DevTools on launch (line for development). Should be removed or conditioned for production builds.
+## DevTools (resolved)
+Previously `window.js` opened DevTools on launch. This has been removed.

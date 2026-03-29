@@ -2,6 +2,15 @@
 
 ## Recent Changes (as of 2026-03-29)
 
+### i18n: Switch to Chinese + English (uncommitted)
+- Removed Italian translation (`i18n/it.json`)
+- Added Chinese translation (`i18n/zh.json`) with all 132 keys
+- Changed default fallback language from English to Chinese in `i18n/i18n.js`
+- Supported languages: `zh` (Chinese, default), `en` (English)
+
+### DevTools disabled (uncommitted)
+- Removed `mainWindow.webContents.openDevTools()` from `window.js` — no longer opens inspector on launch
+
 ### Dependency Modernization (b5afab9)
 - Upgraded Electron 9 → 28, serialport 9 → 12, exceljs 1 → 4, electron-log 3 → 4, nconf 0.10 → 0.12
 - Migrated `electron.remote` → `@electron/remote` (separate package) across all modules

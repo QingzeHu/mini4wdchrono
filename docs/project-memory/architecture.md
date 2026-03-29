@@ -2,7 +2,7 @@
 
 ## Electron Setup
 
-- **`window.js`** — Main process entry point. Creates BrowserWindow with `nodeIntegration: true`, `contextIsolation: false`, `sandbox: false`. Enforces single instance via `requestSingleInstanceLock()`. Initializes `@electron/remote`. Opens DevTools by default.
+- **`window.js`** — Main process entry point. Creates BrowserWindow with `nodeIntegration: true`, `contextIsolation: false`, `sandbox: false`. Enforces single instance via `requestSingleInstanceLock()`. Initializes `@electron/remote`.
 - **`index.html`** — Renderer entry point (687 lines). Single-page app with tab navigation (setup, race, players, manches/rounds, config, about). Uses Bulma CSS framework. Loads `js/main.js` as renderer entry.
 
 ## Core Modules (`js/`)
@@ -39,14 +39,14 @@ State managed via module-scope variables: `currTrack`, `currTournament`, `manche
 ### `chrono.js` — Race Timing Engine
 Pure timing logic. Tracks 3 car objects through laps, calculates positions, delays, speeds. Uses time thresholds (min/max cutoff) to filter false sensor reads. Hard-coded to 3 lanes.
 
-Dependencies: `storage` (for threshold settings), `clone`, `underscore`.
+Dependencies: `storage` (for threshold settings), `clone`.
 
 Key methods: `addLap(lane)`, `checkOutCars()`, `checkNotStartedCars()`, `isRaceFinished()`
 
 ### `storage.js` — Persistence Layer
 Uses `electron-settings` with dynamic `setPath()` to switch between race files. Race data stored as JSON files in `userData/races/`. Handles save/load of rounds, player data aggregation, sorted player rankings.
 
-Dependencies: `@electron/remote`, `fs`, `path`, `electron-settings`, `configuration`, `underscore`.
+Dependencies: `@electron/remote`, `fs`, `path`, `electron-settings`, `configuration`.
 
 Contains tournament ranking logic (`getSortedPlayerList`) that could belong in a tournament module.
 
@@ -58,7 +58,7 @@ Dependencies: `@electron/remote`, `fs`, `path`, `nconf`.
 ### `ui.js` — DOM Rendering (~631 lines)
 All DOM manipulation via jQuery. Renders race state, player lists, manche tables, settings forms, serial port listings.
 
-Dependencies: `jquery`, `underscore`, `serialport`, `strftime`, `utils`, `configuration`, `storage`, `i18n`.
+Dependencies: `serialport` (for `SerialPort`), `strftime`, `utils`, `configuration`, `storage`, `i18n`. Note: `jquery` and `underscore` are accessed via `window.$`/`window._` set by `main.js`, not imported directly.
 
 ### `export.js` — Excel Export
 Generates XLSX workbook with player standings via `exceljs`. Exports to `~/Mini4wdChrono/` directory.
@@ -84,7 +84,7 @@ All extend `led_manager.js` base class, which provides buzzer control, lane inde
 
 ## Other Directories
 
-- **`i18n/`** — `i18n.js` class with `__()` lookup from JSON locale files (`en.json`, `it.json`). Locale detected from system at startup, no dynamic switching.
+- **`i18n/`** — `i18n.js` class with `__()` lookup from JSON locale files (`en.json`, `zh.json`). Locale detected from system at startup (defaults to Chinese if locale not found), no dynamic switching.
 - **`dev/`** — Sample data files and test settings configs
 - **`css/`** — Bulma CSS framework + custom styles
 

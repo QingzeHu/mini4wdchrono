@@ -9,12 +9,11 @@ module.exports = i18n;
 
 function i18n() {
      let tnpath = path.join(__dirname, app.getLocale().substring(0, 2) + '.json');
-     // tnpath = path.join(__dirname, 'it.json'); // uncomment this line to force italian language
      if (fs.existsSync(tnpath)) {
           loadedLanguage = JSON.parse(fs.readFileSync(tnpath), 'utf8');
      }
      else {
-          loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, 'en.json'), 'utf8'));
+          loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, 'zh.json'), 'utf8'));
      }
 }
 
