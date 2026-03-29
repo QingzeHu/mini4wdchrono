@@ -14,9 +14,8 @@ brew cask install arduino
 
 ### Windows (PowerShell as admin)
 ```bash
-choco install python2
 choco install arduino
-choco install nodejs --version=10.16.3
+choco install nodejs
 npm install -g windows-build-tools
 ```
 
@@ -24,7 +23,7 @@ npm install -g windows-build-tools
 ```bash
 cd mini4wdchrono
 nodenv install        # macOS only
-npm install           # also runs electron-rebuild via postinstall
+npm install           # runs @electron/rebuild + patches firmata/johnny-five for serialport v12
 ```
 
 ## Run
@@ -40,7 +39,7 @@ Edit `js/main.js`, set `debugMode = true` at line 4. This bypasses Arduino and l
 
 ### `NODE_MODULE_VERSION` mismatch
 ```bash
-npm run postinstall   # runs electron-rebuild
+npm run postinstall   # runs @electron/rebuild and re-patches serialport compatibility
 ```
 
 ### Linux serial port permission

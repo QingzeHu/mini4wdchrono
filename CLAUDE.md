@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Mini4wdChrono — Electron 9 desktop app, 3-lane lap timer for Mini 4WD Japan Cup races. Arduino + IR sensors via USB.
+Mini4wdChrono — Electron 28 desktop app, 3-lane lap timer for Mini 4WD Japan Cup races. Arduino + IR sensors via USB.
 
 ## Quick Commands
 
 ```bash
-npm install           # install + electron-rebuild
+npm install           # install + @electron/rebuild + serialport patches
 npm start             # launch (requires Arduino USB)
 npm run watch         # launch with hot reload
 npm run postinstall   # fix native module version mismatch

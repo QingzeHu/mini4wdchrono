@@ -13,7 +13,7 @@ It connects to an Arduino board via USB (using johnny-five and serialport) to re
 
 | Layer        | Technology                          |
 |--------------|-------------------------------------|
-| Runtime      | Electron 9 (nodeIntegration: true)  |
+| Runtime      | Electron 28 (nodeIntegration: true, contextIsolation: false) |
 | Hardware     | johnny-five + serialport            |
 | UI Framework | Bulma CSS + jQuery                  |
 | Persistence  | electron-settings (JSON files)      |
