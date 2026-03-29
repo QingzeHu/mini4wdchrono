@@ -1,6 +1,6 @@
 'use strict';
 
-const { app } = require('electron').remote;
+const { app } = require('@electron/remote');
 
 // converts a milliseconds integer in a readable string like '12.345'
 const prettyTime = (millis) => {

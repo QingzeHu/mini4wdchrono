@@ -4,22 +4,23 @@
   "description": "[![WIP](https://img.shields.io/badge/status-WORK%20IN%20PROGRESS-red.svg)](https://github.com/Pimentoso/mini4wdchrono)",
   "main": "window.js",
   "dependencies": {
+    "@electron/remote": "^2.1.2",
     "clone": "^2.1.2",
-    "electron-log": "^3.0.5",
-    "electron-settings": "^3.2.0",
-    "exceljs": "^1.10.0",
-    "johnny-five": "2.0.0",
-    "jquery": "^3.5.0",
-    "nconf": "^0.10.0",
-    "serialport": "^9.0.7",
+    "electron-log": "^4.4.8",
+    "electron-settings": "3.2.0",
+    "exceljs": "^4.4.0",
+    "johnny-five": "^2.1.0",
+    "jquery": "^3.7.1",
+    "nconf": "^0.12.1",
+    "serialport": "^12.0.0",
     "strftime": "^0.10.2",
-    "underscore": "^1.9.1",
+    "underscore": "^1.13.7",
     "node-pixel": "^0.11.0"
   },
   "devDependencies": {
-    "electron": "9.4.4",
-    "electron-packager": "^15.3.0",
-    "electron-rebuild": "^2.3.5",
+    "electron": "^28.3.3",
+    "electron-packager": "^17.1.2",
+    "@electron/rebuild": "^3.7.0",
     "electron-reload": "^1.5.0"
   },
   "scripts": {
@@ -36,5 +37,13 @@
   "bugs": {
     "url": "https://github.com/Pimentoso/mini4wdchrono/issues"
   },
-  "homepage": "https://github.com/Pimentoso/mini4wdchrono#readme"
+  "homepage": "https://github.com/Pimentoso/mini4wdchrono#readme",
+  "overrides": {
+    "firmata": {
+      "serialport": "$serialport"
+    },
+    "johnny-five": {
+      "serialport": "$serialport"
+    }
+  }
 }

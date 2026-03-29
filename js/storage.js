@@ -1,9 +1,8 @@
 'use strict';
 
-const { app } = require('electron').remote;
+const { app } = require('@electron/remote');
 const fs = require('fs');
 const path = require('path');
-const jsonfile = require('jsonfile');
 const storage = require('electron-settings');
 const configuration = require('./configuration');
 configuration.init();
@@ -73,7 +72,7 @@ const getRecentFiles = (num) => {
 	files = files.filter(extension);
 	let recent = [];
 	files.forEach((filename) => {
-		let data = jsonfile.readFileSync(path.join(storagedir, filename));
+		let data = JSON.parse(fs.readFileSync(path.join(storagedir, filename), 'utf8'));
 		if (data) {
 			recent.push({
 				filename: filename,

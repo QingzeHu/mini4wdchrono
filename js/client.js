@@ -1,6 +1,6 @@
 'use strict';
 
-const { dialog, getCurrentWindow } = require('electron').remote;
+const { dialog, getCurrentWindow } = require('@electron/remote');
 const ui = require('./ui');
 const utils = require('./utils');
 const storage = require('./storage');

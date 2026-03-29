@@ -3,8 +3,13 @@
 'use strict';
 
 const { app, BrowserWindow, Menu } = require('electron')
+const remoteMain = require('@electron/remote/main');
 const path = require('path');
 const url = require('url');
+
+remoteMain.initialize();
+
+
 const isMac = process.platform === 'darwin';
 
 if (process.argv[2] == "--watch") {
@@ -21,7 +26,9 @@ function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration: true,
+			contextIsolation: false,
+			sandbox: false
 		}
 	});
 
@@ -32,14 +39,15 @@ function createWindow() {
 		slashes: true
 	}));
 
+	// Enable @electron/remote for this window
+	remoteMain.enable(mainWindow.webContents);
+
 	// Maximize.
 	mainWindow.maximize();
 	mainWindow.setResizable(false);
 
-	// Open the DevTools.
-	// devToolsWindow = new BrowserWindow();
-	// mainWindow.webContents.setDevToolsWebContents(devToolsWindow.webContents);
-	// mainWindow.webContents.openDevTools();
+	// Open the DevTools (remove this line for production).
+	mainWindow.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function () {
@@ -76,9 +84,6 @@ function createWindow() {
 		}
 	});
 }
-
-// Fix for running serialPort on renderer process. Remove when serialPort is updated
-app.allowRendererProcessReuse = false
 
 // Prevent multiple instances of this app to run.
 const gotTheLock = app.requestSingleInstanceLock();
