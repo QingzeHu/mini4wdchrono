@@ -58,12 +58,12 @@ Dependencies: `@electron/remote`, `fs`, `path`, `nconf`.
 ### `ui.js` — DOM Rendering (~631 lines)
 All DOM manipulation via jQuery. Renders race state, player lists, manche tables, settings forms, serial port listings.
 
-Dependencies: `serialport` (for `SerialPort`), `strftime`, `utils`, `configuration`, `storage`, `i18n`. Note: `jquery` and `underscore` are accessed via `window.$`/`window._` set by `main.js`, not imported directly.
+Dependencies: `serialport` (destructured `{ SerialPort }`), `strftime`, `utils`, `configuration`, `storage`, `i18n`. Note: `jquery` and `underscore` are accessed via `window.$`/`window._` set by `main.js`, not imported directly. Calls `configuration.init()` at module scope (line 8).
 
 ### `export.js` — Excel Export
 Generates XLSX workbook with player standings via `exceljs`. Exports to `~/Mini4wdChrono/` directory.
 
-Dependencies: `exceljs`, `utils`, `@electron/remote`, `fs`, `path`, `storage`, `strftime`.
+Dependencies: `exceljs`, `utils`, `@electron/remote`, `fs`, `path`, `storage`, `strftime`, `i18n`.
 
 ### `utils.js` — Time Formatting Helpers
 `prettyTime()` (ms → locale string), `safeTime()` (string → ms), `delay()` (chainable timeout).
@@ -84,7 +84,7 @@ All extend `led_manager.js` base class, which provides buzzer control, lane inde
 
 ## Other Directories
 
-- **`i18n/`** — `i18n.js` class with `__()` lookup from JSON locale files (`en.json`, `zh.json`). Locale detected from system at startup (defaults to Chinese if locale not found), no dynamic switching.
+- **`i18n/`** — `i18n.js` constructor function (not a class) with `__()` prototype method for lookup from JSON locale files (`en.json`, `zh.json`). Locale detected from system at startup (defaults to Chinese if locale not found), no dynamic switching.
 - **`dev/`** — Sample data files and test settings configs
 - **`css/`** — Bulma CSS framework + custom styles
 
@@ -100,13 +100,16 @@ window.js (Electron main)
             │   ├── chrono ── storage
             │   ├── storage
             │   ├── ui ────── storage, configuration, utils
-            │   └── export ── storage, utils
+            │   └── export ── storage, utils, i18n
             ├── ui
             ├── led_managers/* ── utils, storage
             └── johnny-five (hardware)
 ```
 
 No circular dependencies detected. However, `main.js` and `client.js` both perform DOM manipulation, creating implicit coupling through shared DOM state.
+
+### Firmata Module Resolution (important)
+johnny-five `require("firmata")` resolves to its **nested** `johnny-five/node_modules/firmata` (v2.3.0), NOT the top-level `firmata` (v0.19.1). The nested firmata does `require("firmata-io")(require("./com"))`, passing `com` as the Transport constructor. This is the critical path for serialport v12 compatibility patches.
 
 ## Data Flow
 
@@ -141,4 +144,6 @@ storage.saveRound() → JSON file
 3. **Tournament logic fragmentation** — Finals generation lives in `client.js`, ranking in `storage.js`, rendering in `ui.js`. No cohesive tournament module.
 4. **Hard-coded 3 lanes** — Lane count baked into `chrono.js`, LED managers, and HTML structure. Not easily extensible.
 5. **No event bus** — All module communication via direct function calls, creating tight coupling.
-6. **`configuration` not imported in `client.js`** — Used but never required; would throw ReferenceError at runtime.
+6. **`configuration` not imported in `client.js`** — Used at lines 25, 206 but never required; would throw ReferenceError at runtime.
+7. ~~**`i18n` not imported in `export.js`**~~ — **Resolved.** Added `i18n` import to `export.js`.
+8. **Serialport v12 compatibility** — Requires postinstall patches to three `com.js` files: top-level `firmata/lib/com.js`, nested `johnny-five/node_modules/firmata/lib/com.js` (the one actually used at runtime via firmata-io), and `johnny-five/lib/board.js`. The nested firmata (v2.3.0) uses `firmata-io` which expects a Transport class passed via `bindTransport()`, not a `com.SerialPort` property.

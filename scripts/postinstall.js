@@ -46,9 +46,11 @@ try {
 
     // Compatibility wrapper: firmata calls new com.SerialPort(path, options)
     // but serialport v12 expects new SerialPort({ path, ...options })
-    function SerialPortCompat(portPath, options, openCallback) {
-      const opts = Object.assign({}, options, { path: portPath });
-      return new SerialPort(opts, openCallback);
+    class SerialPortCompat extends SerialPort {
+      constructor(portPath, options, openCallback) {
+        const opts = Object.assign({}, options || {}, { path: portPath });
+        super(opts, openCallback);
+      }
     }
 
     com = {
@@ -71,6 +73,31 @@ module.exports = com;
 `;
   fs.writeFileSync(comPath, patchedCom);
   console.log('Patched firmata/lib/com.js for serialport v12 compatibility');
+}
+
+// Patch johnny-five's nested firmata (firmata v2.3.0) com.js
+// This is the one actually used by johnny-five via firmata-io.
+// It passes com directly as Transport constructor to firmata-io,
+// so com must be a class, not { SerialPort } object.
+const j5ComPath = path.join(__dirname, '..', 'node_modules', 'johnny-five', 'node_modules', 'firmata', 'lib', 'com.js');
+if (fs.existsSync(j5ComPath)) {
+  let j5ComSrc = fs.readFileSync(j5ComPath, 'utf8');
+  if (j5ComSrc.includes('SerialPort = require("serialport")') && !j5ComSrc.includes('SerialPortCompat')) {
+    j5ComSrc = j5ComSrc.replace(
+      `SerialPort = require("serialport");\n    com = SerialPort;`,
+      `const sp = require("serialport");
+    const RealSerialPort = sp.SerialPort || sp;
+    class SerialPortCompat extends RealSerialPort {
+      constructor(portPath, options, openCallback) {
+        const opts = Object.assign({}, options || {}, { path: portPath });
+        super(opts, openCallback);
+      }
+    }
+    com = SerialPortCompat;`
+    );
+    fs.writeFileSync(j5ComPath, j5ComSrc);
+    console.log('Patched johnny-five/node_modules/firmata/lib/com.js for serialport v12 compatibility');
+  }
 }
 
 // Patch johnny-five's board.js: serialport v12 uses named export

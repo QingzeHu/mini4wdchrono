@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const storage = require('./storage');
 const strftime = require('strftime');
+const i18n = new (require('../i18n/i18n'))();
 
 const getXlsFilePath = () => {
 	// {user home dir}/Mini4wdChrono
